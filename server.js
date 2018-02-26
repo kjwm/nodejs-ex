@@ -3,6 +3,7 @@ var express = require('express'),
     app     = express(),
     morgan  = require('morgan'),
     passport = require('passport'),
+    bodyParser = require('body-parser'),
     config = require('./config/database'),
     api = require('./routes/api');
     
