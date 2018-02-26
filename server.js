@@ -59,6 +59,19 @@ var initDb = function(callback) {
   });
 };
 
+//Enable cors
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+//Initialize passport
+app.use(passport.initialize());
+
 app.get('/', function (req, res) {
   // try to initialize the db on every request if it's not already
   // initialized.
@@ -66,6 +79,21 @@ app.get('/', function (req, res) {
     initDb(function(err){});
   }
   res.send('Page under construction.');
+});
+
+app.get('/pagecount', function (req, res) {
+  // try to initialize the db on every request if it's not already
+  // initialized.
+  if (!db) {
+    initDb(function(err){});
+  }
+  if (db) {
+    db.collection('counts').count(function(err, count ){
+      res.send('{ pageCount: ' + count + '}');
+    });
+  } else {
+    res.send('{ pageCount: -1 }');
+  }
 });
 
 // error handling
@@ -76,16 +104,6 @@ app.use(function(err, req, res, next){
 
 initDb(function(err){
   console.log('Error connecting to Mongo. Message:\n'+err);
-});
-
-//Initialize passport
-app.use(passport.initialize());
-
-//Enable cors
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
 });
 
 app.use('/api', api);
