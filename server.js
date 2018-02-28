@@ -4,6 +4,7 @@ var express = require('express'),
     morgan  = require('morgan'),
     passport = require('passport'),
     bodyParser = require('body-parser'),
+    mongoose = require('mongoose'),
     config = require('./config/database'),
     api = require('./routes/api');
     
@@ -13,7 +14,7 @@ app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
+    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1',
     mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
     mongoURLLabel = "";
 
@@ -35,7 +36,11 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
     mongoURL += mongoHost + ':' +  mongoPort + '/' + mongoDatabase;
 
   }
+}else {
+  mongoURL = 'mongodb://localhost/BudgetAppDb';
 }
+
+
 var db = null,
     dbDetails = new Object();
 
@@ -43,21 +48,30 @@ var initDb = function(callback) {
   if (mongoURL == null) return;
 
   var mongodb = require('mongodb');
+
   if (mongodb == null) return;
 
-  mongodb.connect(mongoURL, function(err, conn) {
-    if (err) {
-      callback(err);
-      return;
-    }
-
-    db = conn;
-    dbDetails.databaseName = db.databaseName;
+  mongoose.Promise = global.Promise;
+  db = mongoose.connect('mongodb://localhost/Tasksdb'); 
+  dbDetails.databaseName = db.databaseName;
     dbDetails.url = mongoURLLabel;
     dbDetails.type = 'MongoDB';
 
     console.log('Connected to MongoDB at: %s', mongoURL);
-  });
+
+  // mongodb.connect(mongoURL, function(err, conn) {
+  //   if (err) {
+  //     callback(err);
+  //     return;
+  //   }
+
+  //   db = conn;
+  //   dbDetails.databaseName = db.databaseName;
+  //   dbDetails.url = mongoURLLabel;
+  //   dbDetails.type = 'MongoDB';
+
+  //   console.log('Connected to MongoDB at: %s', mongoURL);
+  // });
 };
 
 //Enable cors

@@ -6,7 +6,13 @@ require('../config/passport')(passport);
 var express = require('express');
 var jwt = require('jsonwebtoken');
 var router = express.Router();
+
 var User = require("../app/models/user");
+
+//Controllers
+var budget = require('../app/Budget'),
+ category = require('../app/Category'),
+ expense = require('../app/Expense');
 
 router.post('/signup', function(req, res) {
     if (!req.body.username || !req.body.password) {
@@ -39,7 +45,7 @@ router.post('/signup', function(req, res) {
         user.comparePassword(req.body.password, function (err, isMatch) {
           if (isMatch && !err) {
             // if user is found and password is right create a token
-            var token = jwt.sign(user, config.secret);
+            var token = jwt.sign(user.toObject(), config.secret);
             // return the information including token as JSON
             res.json({success: true, token: 'JWT ' + token});
           } else {
@@ -50,4 +56,27 @@ router.post('/signup', function(req, res) {
     });
   });
 
-  module.exports = router;
+//Category routes
+router.get('/categories', passport.authenticate('jwt', { session: false}), category.list_all_categories);
+router.post('/categories', passport.authenticate('jwt', { session: false}), category.create_a_category);
+
+router.get('/categories/:id', passport.authenticate('jwt', { session: false}), category.read_a_category);
+router.put('/categories/:id', passport.authenticate('jwt', { session: false}), category.update_a_category);
+router.delete('/categories/:id', passport.authenticate('jwt', { session: false}), category.delete_a_category);
+
+router.get('/budget', passport.authenticate('jwt', { session: false}), budget.list_all_items);
+router.post('/budget', passport.authenticate('jwt', { session: false}), budget.create_an_item);
+
+router.get('/budget/:taskId', passport.authenticate('jwt', { session: false}), budget.read_an_item);
+router.put('/budget/:taskId', passport.authenticate('jwt', { session: false}), budget.update_an_item);
+router.delete('/budget/:taskId', passport.authenticate('jwt', { session: false}), budget.delete_an_item);
+
+//Expense routes
+router.get('/expense', passport.authenticate('jwt', { session: false}), expense.list_all);
+router.post('/expense', passport.authenticate('jwt', { session: false}), expense.create_item);
+
+router.get('/expense/:id', passport.authenticate('jwt', { session: false}), expense.read_item);
+router.put('/expense/:id', passport.authenticate('jwt', { session: false}), expense.update_item);
+router.delete('/expense/:id', passport.authenticate('jwt', { session: false}), expense.delete_item);
+
+module.exports = router;
