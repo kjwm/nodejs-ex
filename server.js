@@ -103,7 +103,7 @@ app.get('/pagecount', function (req, res) {
     initDb(function(err){});
   }
   if (db) {
-    res.send('{ pageCount: 3');
+    res.send('{ pageCount: 3 }');
   } else {
     res.send('{ pageCount: -1 }');
   }
