@@ -8,7 +8,7 @@ var express = require('express'),
     config = require('./config/database'),
     api = require('./routes/api');
     
-Object.assign=require('object-assign')
+Object.assign=require('object-assign');
 
 app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
@@ -37,13 +37,11 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
 
   }
 }else {
-  mongoURL = 'mongodb://localhost:27017/BudgetAppDb';
+  mongoURL = 'mongodb://localhost/BudgetAppDb';
 }
 
-console.log(mongoURL);
-var db = null,db2 = null,
-    dbDetails = new Object(),
-    db2Details = new Object();
+var db = null,
+    dbDetails = new Object();
 
 var initDb = function(callback) {
   if (mongoURL == null) return;
@@ -52,22 +50,16 @@ var initDb = function(callback) {
 
   if (mongodb == null) return;
 
-  mongoose.Promise = global.Promise;
-  db = mongoose.connect(mongoURL); 
-  dbDetails.databaseName = db.databaseName;
-  dbDetails.url = mongoURLLabel;
-  dbDetails.type = 'MongoDB';
-
   mongodb.connect(mongoURL, function(err, conn) {
     if (err) {
       callback(err);
       return;
     }
 
-    db2 = conn;
-    db2Details.databaseName = db2.databaseName;
-    db2Details.url = mongoURLLabel;
-    db2Details.type = 'MongoDB';
+    db = conn;
+    dbDetails.databaseName = db.databaseName;
+    dbDetails.url = mongoURLLabel;
+    dbDetails.type = 'MongoDB';
 
     //console.log('Connected to MongoDB at: %s', mongoURL);
   });
@@ -104,7 +96,7 @@ app.get('/pagecount', function (req, res) {
     initDb(function(err){});
   }
   if (db) {
-    db2.collection('counts').count(function(err, count ){
+    db.collection('counts').count(function(err, count ){
       res.send('{ pageCount: ' + count + '}');
     });
   } else {
