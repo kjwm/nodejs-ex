@@ -98,10 +98,10 @@ app.get('/', function (req, res) {
 app.get('/pagecount', function (req, res) {
   // try to initialize the db on every request if it's not already
   // initialized.
-  if (!db) {
+  if (!db2) {
     initDb(function(err){});
   }
-  if (db) {
+  if (db2) {
     db2.collection('counts').count(function(err, count ){
       res.send('{ pageCount: ' + count + '}');
     });
