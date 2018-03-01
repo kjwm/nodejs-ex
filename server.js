@@ -37,10 +37,10 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
 
   }
 }else {
-  mongoURL = 'mongodb://localhost/BudgetAppDb';
+  mongoURL = 'mongodb://localhost:27017/BudgetAppDb';
 }
 
-
+console.log(mongoURL);
 var db = null,db2 = null,
     dbDetails = new Object(),
     db2Details = new Object();
@@ -58,19 +58,20 @@ var initDb = function(callback) {
   dbDetails.url = mongoURLLabel;
   dbDetails.type = 'MongoDB';
 
-  mongodb.connect(mongoURL, function(err, conn) {
-    if (err) {
-      callback(err);
-      return;
-    }
+  // mongodb.connect(mongoURL, function(err, conn) {
+  //   if (err) {
+  //     callback(err);
+  //     return;
+  //   }
 
-    db2 = conn;
-    db2Details.databaseName = db2.databaseName;
-    db2Details.url = mongoURLLabel;
-    db2Details.type = 'MongoDB';
+  //   db2 = conn;
+  //   db2Details.databaseName = db2.databaseName;
+  //   db2Details.url = mongoURLLabel;
+  //   db2Details.type = 'MongoDB';
 
-    console.log('Connected to MongoDB at: %s', mongoURL);
-  });
+  //   console.log('Connected to MongoDB at: %s', mongoURL);
+  // });
+  console.log('Connected to MongoDB at: %s', mongoURL);
 };
 
 //Enable cors
@@ -98,10 +99,10 @@ app.get('/', function (req, res) {
 app.get('/pagecount', function (req, res) {
   // try to initialize the db on every request if it's not already
   // initialized.
-  if (!db2) {
+  if (!db) {
     initDb(function(err){});
   }
-  if (db2) {
+  if (db) {
     db2.collection('counts').count(function(err, count ){
       res.send('{ pageCount: ' + count + '}');
     });
