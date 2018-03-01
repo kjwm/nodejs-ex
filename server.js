@@ -53,7 +53,7 @@ var initDb = function(callback) {
   if (mongodb == null) return;
 
   mongoose.Promise = global.Promise;
-  db = mongoose.connect('mongodb://localhost/Tasksdb'); 
+  db = mongoose.connect(mongoURL); 
   dbDetails.databaseName = db.databaseName;
   dbDetails.url = mongoURLLabel;
   dbDetails.type = 'MongoDB';
