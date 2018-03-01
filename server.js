@@ -41,8 +41,9 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
 }
 
 
-var db = null,
-    dbDetails = new Object();
+var db = null,db2 = null,
+    dbDetails = new Object(),
+    db2Details = new Object();
 
 var initDb = function(callback) {
   if (mongoURL == null) return;
@@ -54,24 +55,22 @@ var initDb = function(callback) {
   mongoose.Promise = global.Promise;
   db = mongoose.connect('mongodb://localhost/Tasksdb'); 
   dbDetails.databaseName = db.databaseName;
-    dbDetails.url = mongoURLLabel;
-    dbDetails.type = 'MongoDB';
+  dbDetails.url = mongoURLLabel;
+  dbDetails.type = 'MongoDB';
+
+  mongodb.connect(mongoURL, function(err, conn) {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    db2 = conn;
+    db2Details.databaseName = db2.databaseName;
+    db2Details.url = mongoURLLabel;
+    db2Details.type = 'MongoDB';
 
     console.log('Connected to MongoDB at: %s', mongoURL);
-
-  // mongodb.connect(mongoURL, function(err, conn) {
-  //   if (err) {
-  //     callback(err);
-  //     return;
-  //   }
-
-  //   db = conn;
-  //   dbDetails.databaseName = db.databaseName;
-  //   dbDetails.url = mongoURLLabel;
-  //   dbDetails.type = 'MongoDB';
-
-  //   console.log('Connected to MongoDB at: %s', mongoURL);
-  // });
+  });
 };
 
 //Enable cors
@@ -103,7 +102,9 @@ app.get('/pagecount', function (req, res) {
     initDb(function(err){});
   }
   if (db) {
-    res.send('{ pageCount: 1 }');
+    db2.collection('counts').count(function(err, count ){
+      res.send('{ pageCount: ' + count + '}');
+    });
   } else {
     res.send('{ pageCount: -1 }');
   }
