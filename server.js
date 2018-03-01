@@ -58,19 +58,19 @@ var initDb = function(callback) {
   dbDetails.url = mongoURLLabel;
   dbDetails.type = 'MongoDB';
 
-  // mongodb.connect(mongoURL, function(err, conn) {
-  //   if (err) {
-  //     callback(err);
-  //     return;
-  //   }
+  mongodb.connect(mongoURL, function(err, conn) {
+    if (err) {
+      callback(err);
+      return;
+    }
 
-  //   db2 = conn;
-  //   db2Details.databaseName = db2.databaseName;
-  //   db2Details.url = mongoURLLabel;
-  //   db2Details.type = 'MongoDB';
+    db2 = conn;
+    db2Details.databaseName = db2.databaseName;
+    db2Details.url = mongoURLLabel;
+    db2Details.type = 'MongoDB';
 
-  //   console.log('Connected to MongoDB at: %s', mongoURL);
-  // });
+    //console.log('Connected to MongoDB at: %s', mongoURL);
+  });
   console.log('Connected to MongoDB at: %s', mongoURL);
 };
 
