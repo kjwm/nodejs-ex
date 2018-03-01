@@ -102,9 +102,10 @@ app.get('/pagecount', function (req, res) {
     initDb(function(err){});
   }
   if (db) {
-    db2.collection('counts').count(function(err, count ){
-      res.send('{ pageCount: ' + count + '}');
-    });
+    // db2.collection('counts').count(function(err, count ){
+    //   res.send('{ pageCount: ' + count + '}');
+    // });
+    res.send('{ pageCount: 0 }');
   } else {
     res.send('{ pageCount: -1 }');
   }
