@@ -1,15 +1,20 @@
 //  OpenShift sample Node application
 var express = require('express'),
     app     = express(),
-    morgan  = require('morgan');
+    morgan  = require('morgan'),
+    passport = require('passport'),
+    bodyParser = require('body-parser'),
+    mongoose = require('mongoose'),
+    config = require('./config/database'),
+    api = require('./routes/api');
     
-Object.assign=require('object-assign')
+Object.assign=require('object-assign');
 
 app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
+    ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1',
     mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
     mongoURLLabel = "";
 
@@ -31,7 +36,10 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
     mongoURL += mongoHost + ':' +  mongoPort + '/' + mongoDatabase;
 
   }
+}else {
+  //mongoURL = 'mongodb://localhost:27017/BudgetAppDb';
 }
+
 var db = null,
     dbDetails = new Object();
 
@@ -39,6 +47,7 @@ var initDb = function(callback) {
   if (mongoURL == null) return;
 
   var mongodb = require('mongodb');
+
   if (mongodb == null) return;
 
   mongodb.connect(mongoURL, function(err, conn) {
@@ -56,25 +65,26 @@ var initDb = function(callback) {
   });
 };
 
+//Enable cors
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+//Initialize passport
+app.use(passport.initialize());
+
 app.get('/', function (req, res) {
   // try to initialize the db on every request if it's not already
   // initialized.
   if (!db) {
     initDb(function(err){});
   }
-  if (db) {
-    var col = db.collection('counts');
-    // Create a document with request IP and current time of request
-    col.insert({ip: req.ip, date: Date.now()});
-    col.count(function(err, count){
-      if (err) {
-        console.log('Error running count. Message:\n'+err);
-      }
-      res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails });
-    });
-  } else {
-    res.render('index.html', { pageCountMessage : null});
-  }
+  res.send('Page under construction.');
 });
 
 app.get('/pagecount', function (req, res) {
@@ -101,6 +111,8 @@ app.use(function(err, req, res, next){
 initDb(function(err){
   console.log('Error connecting to Mongo. Message:\n'+err);
 });
+
+app.use('/api', api);
 
 app.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
