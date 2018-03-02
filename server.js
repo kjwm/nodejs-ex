@@ -57,6 +57,9 @@ var initDb = function(callback) {
 
     console.log('Connected to MongoDB at: %s', mongoURL);
   });
+
+  //Connect with mongoose too
+  mongoose.connect(mongoURL);
 };
 
 //Enable cors
