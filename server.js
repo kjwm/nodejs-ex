@@ -37,7 +37,7 @@ if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
 
   }
 }else {
-  mongoURL = 'mongodb://localhost:27017/BudgetAppDb';
+  //mongoURL = 'mongodb://localhost:27017/BudgetAppDb';
 }
 
 var db = null,
