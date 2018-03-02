@@ -110,6 +110,8 @@ app.get('/pagecount', function (req, res) {
   }
 });
 
+app.use('/api', api);
+
 // error handling
 app.use(function(err, req, res, next){
   console.error(err.stack);
