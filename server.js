@@ -66,6 +66,9 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.get('/', function (req, res) {
   // try to initialize the db on every request if it's not already
   // initialized.
