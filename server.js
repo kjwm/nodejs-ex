@@ -4,7 +4,9 @@ var express = require('express'),
     morgan  = require('morgan'),
     passport = require('passport'),
     bodyParser = require('body-parser'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    config = require('./config/database'),
+    api = require('./routes/api');
     
 Object.assign=require('object-assign')
 
