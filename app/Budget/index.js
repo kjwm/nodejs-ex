@@ -4,8 +4,6 @@ var mongoose = require('mongoose'),
   Category = require('../models/Category'),
   Item = require('../models/Item');
 
-var category = require('../Category');
-
 exports.list_all_items = function(req, res) {
     var user =  req.user;
     Item.find({ 'user_id': user._id }).populate('category').exec(function(err, items) {
@@ -17,7 +15,11 @@ exports.list_all_items = function(req, res) {
 };
 
 exports.create_an_item = function(req, res) {
-  var new_item = new Item(req.body);
+  var post = req.body;
+    post.user_id = req.user._id;
+
+  var new_item = new Item(post);
+  
   new_item.save(function(err, task) {
     if (err)
       res.send(err);
