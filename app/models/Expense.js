@@ -3,17 +3,30 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var TaskSchema = new Schema({
+    description: {
+        type: String
+    },
     amount: {
         type: Number,
         required: true
+    },
+    trans_date: {
+        type: Date
+    },
+    recurring: {
+        type: Boolean,
+        default: 0
+    },
+    frequency: {
+        type: String
     },
     category: {
         type : Schema.ObjectId,
         ref : 'Categories'
     },
-    user_id: {
+    budget_id: {
         type: Schema.ObjectId,
-        ref: 'User'
+        ref: 'Budgets'
     },
     created_date: {
         type: Date,

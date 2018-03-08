@@ -7,9 +7,16 @@ var TaskSchema = new Schema({
     type: Number,
     required: true
   },
+  description: {
+    type: String
+  },
   category: {
     type : Schema.ObjectId,
     ref : 'Categories'
+  },
+  budget_id: {
+    type: Schema.ObjectId,
+    ref: 'Budgets'
   },
   user_id: {
     type: Schema.ObjectId,

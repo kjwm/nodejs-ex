@@ -11,6 +11,7 @@ var User = require("../app/models/user");
 
 //Controllers
 var budget = require('../app/Budget'),
+ income = require('../app/Income'),
  category = require('../app/Category'),
  expense = require('../app/Expense');
 
@@ -64,12 +65,21 @@ router.get('/categories/:id', passport.authenticate('jwt', { session: false}), c
 router.put('/categories/:id', passport.authenticate('jwt', { session: false}), category.update_a_category);
 router.delete('/categories/:id', passport.authenticate('jwt', { session: false}), category.delete_a_category);
 
+//Budget
 router.get('/budget', passport.authenticate('jwt', { session: false}), budget.list_all_items);
 router.post('/budget', passport.authenticate('jwt', { session: false}), budget.create_an_item);
 
 router.get('/budget/:taskId', passport.authenticate('jwt', { session: false}), budget.read_an_item);
 router.put('/budget/:taskId', passport.authenticate('jwt', { session: false}), budget.update_an_item);
 router.delete('/budget/:taskId', passport.authenticate('jwt', { session: false}), budget.delete_an_item);
+
+//Income
+router.get('/income', passport.authenticate('jwt', { session: false}), income.list_all_items);
+router.post('/income', passport.authenticate('jwt', { session: false}), income.create_an_item);
+
+router.get('/income/:taskId', passport.authenticate('jwt', { session: false}), income.read_an_item);
+router.put('/income/:taskId', passport.authenticate('jwt', { session: false}), income.update_an_item);
+router.delete('/income/:taskId', passport.authenticate('jwt', { session: false}), income.delete_an_item);
 
 //Expense routes
 router.get('/expense', passport.authenticate('jwt', { session: false}), expense.list_all);
